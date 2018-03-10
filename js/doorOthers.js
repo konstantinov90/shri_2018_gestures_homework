@@ -7,13 +7,9 @@
  */
 function Door0(number, onUnlock) {
     DoorBase.apply(this, arguments);
-    var buttons = [
-        this.popup.querySelector('.door-riddle__button_0'),
-        this.popup.querySelector('.door-riddle__button_1'),
-        this.popup.querySelector('.door-riddle__button_2')
-    ];
+    var buttons = Array.from(this.popup.querySelectorAll('.door-riddle__button'));
 
-    buttons.forEach(function(b) {
+    buttons.forEach(function (b) {
         b.addEventListener('pointerdown', _onButtonPointerDown.bind(this));
         b.addEventListener('pointerup', _onButtonPointerUp.bind(this));
         b.addEventListener('pointercancel', _onButtonPointerUp.bind(this));
@@ -34,7 +30,7 @@ function Door0(number, onUnlock) {
      */
     function checkCondition() {
         var isOpened = true;
-        buttons.forEach(function(b) {
+        buttons.forEach(function (b) {
             if (!b.classList.contains('door-riddle__button_pressed')) {
                 isOpened = false;
             }
@@ -42,7 +38,7 @@ function Door0(number, onUnlock) {
 
         // Если все три кнопки зажаты одновременно, то откроем эту дверь
         if (isOpened) {
-            buttons.forEach(function(b) {
+            buttons.forEach(function (b) {
                 b.classList.remove('door-riddle__button_pressed');
             });
             this.unlock();
@@ -69,16 +65,13 @@ function Door1(number, onUnlock) {
     var tmout;
     var transitionDurationMs = 200;
     var successCoord = 160;
-    var randVal = Math.random(0,1);
+    var randVal = Math.random(0, 1);
 
-    var handles = [
-        this.popup.querySelector('.door-riddle__handle_0'),
-        this.popup.querySelector('.door-riddle__handle_1')
-    ];
+    var handles = Array.from(this.popup.querySelectorAll('.door-riddle__handle'));
     handles[0].successValue = randVal;
-    handles[1].successValue = 1-randVal;
+    handles[1].successValue = 1 - randVal;
 
-    handles.forEach(function(h) {
+    handles.forEach(function (h) {
         h.addEventListener('pointerdown', _onHandlePointerDown.bind(h));
         h.addEventListener('pointerup', _clearPointerMoveHandler.bind(h));
         h.addEventListener('pointercancel', _clearPointerMoveHandler.bind(h));
@@ -103,17 +96,17 @@ function Door1(number, onUnlock) {
 
         this.style.bottom = 0;
         clearTimeout(tmout);
-        tmout = setTimeout(function() {
+        tmout = setTimeout(function () {
             checkCondition();
             this.style.transition = null;
             this.successReached = false;
         }.bind(this), transitionDurationMs);
     }
-    
+
     function checkCondition() {
-        var successValue = handles.filter(function(h) {
+        var successValue = handles.filter(function (h) {
             return h.successReached === true;
-        }).reduce(function(s, h) {
+        }).reduce(function (s, h) {
             return h.successValue + s;
         }, 0);
         console.log(successValue);
@@ -141,10 +134,29 @@ Door1.prototype.constructor = DoorBase;
  */
 function Door2(number, onUnlock) {
     DoorBase.apply(this, arguments);
+    var that = this;
 
     var h = this.popup.querySelector('.door-riddle__circle__handle');
     var c = this.popup.querySelector('.door-riddle__circle');
-    var startPoint, initDistance;
+    var locks = Array.from(this.popup.querySelectorAll('.door-riddle__circle__lock'));
+    locks.map(function (l) {
+        l.isPointContained = function (p) {
+            var bb = l.getBoundingClientRect();
+            if (p.y >= bb.top && p.y <= bb.bottom && p.x >= bb.left && p.x <= bb.right)
+                return true;
+            return false;
+        };
+        l.unlock = function () {
+            l.classList.add('door-riddle__circle__lock_open');
+        };
+        l.lock = function () {
+            l.classList.remove('door-riddle__circle__lock_open');
+        };
+        l.isUnlocked = function () {
+            return l.classList.contains('door-riddle__circle__lock_open');
+        };
+    });
+    var startPoint, leashLength;
 
 
     h.addEventListener('pointerdown', _onHandlePointerDown.bind(this.popup));
@@ -156,39 +168,56 @@ function Door2(number, onUnlock) {
         this.addEventListener('pointermove', _onPointerMove);
         c.style.position = null;
         startPoint = _getElementCenter(h);
-        initDistance = _getElementsCenterDist(c, h);
+        leashLength = _getElementsCenterDist(c, h);
     }
-    
+
     function _clearPointerMoveHandler(e) {
         this.removeEventListener('pointermove', _onPointerMove);
+        if (checkCondition())
+            that.unlock();
+        locks.map(function (l) {
+            l.lock();
+        });
     }
-    
+
+    function checkCondition() {
+        return locks.filter(function (l) {
+            return !l.isUnlocked()
+        }).length === 0;
+    }
+
     function _onPointerMove(e) {
-        var ptrn = /(-?)\s*(\d*)px/;
         if (e.target === h) {
-            var movementX = /*e.movementX ||*/ (e.clientX - startPoint.x);
-            var movementY = /*e.movementY ||*/ (e.clientY - startPoint.y);
+            var movementX = e.pageX - startPoint.x;
+            var movementY = e.pageY - startPoint.y;
             startPoint = {
-                x: e.clientX,
-                y: e.clientY
+                x: e.pageX,
+                y: e.pageY
             };
 
             var prevTop = h.style.top;
             var prevLeft = h.style.left;
-            var d = ptrn.exec(h.style.top);
+            var d = /(-?)\s*(\d*)px/.exec(h.style.top);
             h.style.top = `calc(50% + ${parseInt(d[1] + d[2]) + movementY}px)`;
             h.style.left = `${parseInt(h.style.left.split('px')[0]) + movementX}px`;
             var dist = _getElementsCenterDist(c, h);
-            console.log(e)
-            console.log(dist, movementX, movementY)
-            if (dist > initDistance*1.1 || dist < initDistance*0.9) {
+            if (dist > leashLength * 1.1 || dist < leashLength * 0.9) {
+                // если ручка вылезла за границы желоба
                 h.style.top = prevTop;
                 h.style.left = prevLeft;
+            } else {
+                // проверим, прошла ли ручка через замок
+                var cntr = _getElementCenter(h);
+                locks.map(function (l) {
+                    if (l.isPointContained(cntr))
+                        l.unlock();
+                });
             }
         }
     }
 
     function _getElementCenter(e) {
+        // определение центра элемента
         var bb = e.getBoundingClientRect();
         return {
             y: bb.top + bb.height / 2,
@@ -197,6 +226,7 @@ function Door2(number, onUnlock) {
     }
 
     function _getElementsCenterDist(e1, e2) {
+        // расстояние между центрами элементов
         var b1 = _getElementCenter(e1);
         var b2 = _getElementCenter(e2);
         return Math.sqrt(Math.pow(b1.x - b2.x, 2) + Math.pow(b1.y - b2.y, 2));
@@ -218,12 +248,12 @@ function Box(number, onUnlock) {
 
     // ==== Напишите свой код для открытия сундука здесь ====
     // Для примера сундук откроется просто по клику на него
-    this.popup.addEventListener('click', function() {
+    this.popup.addEventListener('click', function () {
         this.unlock();
     }.bind(this));
     // ==== END Напишите свой код для открытия сундука здесь ====
 
-    this.showCongratulations = function() {
+    this.showCongratulations = function () {
         alert('Поздравляю! Игра пройдена!');
     };
 }

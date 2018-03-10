@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="ru">
+
 <head>
     <meta charset="utf-8">
     <title>Dungeon of Doom</title>
@@ -11,10 +12,18 @@
 <body>
     <!-- Thanks for assets to Kenny at http://kenney.nl/assets/platformer-pack-redux -->
     <div class="app container">
-        <div class="level level_0"><div class="door door_locked door_level_2"></div></div>
-        <div class="level level_1"><div class="door door_locked door_disabled door_level_1"></div></div>
-        <div class="level level_2"><div class="door door_locked door_disabled door_level_0"></div></div>
-        <div class="level level_3"><div class="box box_locked door door_disabled door_level_3"></div></div>
+        <div class="level level_0">
+            <div class="door door_locked door_level_0"></div>
+        </div>
+        <div class="level level_1">
+            <div class="door door_locked door_disabled door_level_1"></div>
+        </div>
+        <div class="level level_2">
+            <div class="door door_locked door_level_2"></div>
+        </div>
+        <div class="level level_3">
+            <div class="box box_locked door door_disabled door_level_3"></div>
+        </div>
         <div class="level level_4"></div>
 
         <div class="popup popup_hidden popup_level_0">
@@ -45,7 +54,11 @@
                 <div class="popup__close">╳</div>
                 <div class="door-riddle">
                     <div class="door-riddle__circle">
-                        <div style="left: -35px; top: calc(50% - 25px);"class="door-riddle__handle door-riddle__circle__handle"></div>
+                        <div style="left: -35px; top: calc(50% - 25px);" class="door-riddle__handle door-riddle__circle__handle"></div>
+                        <div class="door-riddle__circle__lock door-riddle__circle__lock_0"></div>
+                        <div class="door-riddle__circle__lock door-riddle__circle__lock_1"></div>
+                        <div class="door-riddle__circle__lock door-riddle__circle__lock_2"></div>
+                        <div class="door-riddle__circle__lock door-riddle__circle__lock_3"></div>
                     </div>
                 </div>
             </div>
@@ -62,4 +75,5 @@
     <script src="js/doorOthers.js"></script>
     <script src="js/app.js"></script>
 </body>
+
 </html>

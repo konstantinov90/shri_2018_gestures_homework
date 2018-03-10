@@ -216,11 +216,41 @@ body {
     height: 250px;
     border-radius: 250px;
     background: rgba(0, 0, 0, 0);
-    border: solid 20px red;
+    /* border: solid 20px red; */
+    box-shadow: 0px 0px 18px 20px goldenrod;
+
     position: relative;
 }
 
-/* .door-riddle__circle__handle {
-    top: calc(50% - 25px);
-    left: -35px;
-} */
+.door-riddle__circle__handle {
+    z-index: 2;
+}
+
+.door-riddle__circle__lock {
+    width: 24px;
+    height: 24px;
+    border-radius: 24px;
+    background: wheat;
+    position: absolute;
+    z-index: 1;
+}
+.door-riddle__circle__lock_0 {
+    top: 10%;
+    left: 4%;
+}
+.door-riddle__circle__lock_1 {
+    top: 10%;
+    right: 4.5%;
+}
+.door-riddle__circle__lock_2 {
+    bottom: 10%;
+    left: 4%;
+}
+.door-riddle__circle__lock_3 {
+    bottom: 10%;
+    right: 4.5%;
+}
+
+.door-riddle__circle__lock_open {
+    background: darkgreen;
+}
