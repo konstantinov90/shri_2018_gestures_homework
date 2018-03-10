@@ -282,6 +282,7 @@ function Box(number, onUnlock) {
 
     function _handlePointerMove(e) {
         if (!e.isPrimary) {
+            this.popup.removeEventListener('pointermove', arguments.callee);
             if (startPos - e.pageY > 200) {
                 this.unlock();
             }
