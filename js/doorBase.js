@@ -22,6 +22,9 @@ function DoorBase(number, onUnlock) {
     function onDoorClick() {
         if (!this.isDisabled) {
             this.openPopup();
+            if (this.door.classList.contains('box')) {
+                alert('Вы вспомнили про ключ 🗝 у вас в кармане');
+            }
         }
     }
 
@@ -31,13 +34,13 @@ function DoorBase(number, onUnlock) {
 }
 
 DoorBase.prototype = {
-    openPopup: function() {
+    openPopup: function () {
         this.popup.classList.remove('popup_hidden');
     },
-    closePopup: function() {
+    closePopup: function () {
         this.popup.classList.add('popup_hidden');
     },
-    enable: function() {
+    enable: function () {
         this.door.classList.remove('door_disabled');
         this.isDisabled = false;
     },
@@ -45,14 +48,14 @@ DoorBase.prototype = {
      * Вызывается, если после последовательности действий
      * дверь считается открытой
      */
-    unlock: function() {
+    unlock: function () {
         this.door.classList.remove('door_locked');
         this.isLocked = false;
         this.closePopup();
         this.onUnclockCallback();
         this.showCongratulations();
     },
-    showCongratulations: function() {
+    showCongratulations: function () {
         alert('Дверь ' + this.number + ' открыта!')
     }
 };

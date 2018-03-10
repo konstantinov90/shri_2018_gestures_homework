@@ -250,8 +250,6 @@ function Box(number, onUnlock) {
 
     this.popup.addEventListener('click', _handleKnock.bind(this));
 
-    alert('Вы вспомнили про ключ 🗝 у вас в кармане');
-
     function _handleKnock() {
         if (!knocksLeft) return;
 
