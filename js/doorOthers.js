@@ -245,17 +245,63 @@ Door2.prototype.constructor = DoorBase;
  */
 function Box(number, onUnlock) {
     DoorBase.apply(this, arguments);
+    // постучите три раза м свайпните вверх двумя пальцами
+    var knocksLeft = 3;
+    var startPos;
 
-    // ==== Напишите свой код для открытия сундука здесь ====
-    // Для примера сундук откроется просто по клику на него
-    this.popup.addEventListener('click', function () {
-        this.unlock();
-    }.bind(this));
-    // ==== END Напишите свой код для открытия сундука здесь ====
+    this.popup.addEventListener('click', _handleKnock.bind(this));
+
+    function _handleKnock() {
+        if (!knocksLeft) return;
+
+        knocksLeft -= 1;
+        audio.play()
+        setTimeout(function() {
+            audio.pause()
+            if (!knocksLeft) {
+                alert('Кажется, 🗝 сундук открыт...');
+            }
+        }, 2500);
+        if (!knocksLeft) {
+            this.popup.addEventListener('pointerdown', _onHandlePointerDown.bind(this));
+            this.popup.addEventListener('pointerup', _onHandlePointerUp.bind(this));
+            this.popup.addEventListener('pointerleave', _onHandlePointerUp.bind(this));
+            this.popup.addEventListener('pointercancel', _onHandlePointerUp.bind(this));
+        }
+    }
+
+    function _onHandlePointerDown(e) {
+        if (!e.isPrimary) {
+            this.popup.addEventListener('pointermove', _onHandlePointerMove.bind(this));
+            startPos = e.pageY;
+        }
+    }
+
+    function _onHandlePointerUp(e) {
+        this.popup.removeEventListener('pointermove', _onHandlePointerMove.bind(this));
+    }
+
+    function _onHandlePointerMove(e) {
+        if (!e.isPrimary) {
+            if (startPos - e.pageY > 200) {
+                this.unlock();
+            }
+        }
+    }
 
     this.showCongratulations = function () {
-        alert('Поздравляю! Игра пройдена!');
+        alert('Поздравляю! 💰 💎 ⚱️ Игра пройдена!');
     };
 }
 Box.prototype = Object.create(DoorBase.prototype);
 Box.prototype.constructor = DoorBase;
+
+var audio = new Audio('sounds/key.mp3');
+audio.play();
+setTimeout(function() {
+    audio.pause();
+}, 200);
+// audio.addEventListener('play', function() {
+//     audio.pause();
+//     audio.removeEventListener('play', arguments.callee, false);
+// }, false);
