@@ -114,10 +114,10 @@ function Door1(number, onUnlock) {
             if (successValue < 0.5) {
                 that.unlock();
             } else if (successValue === 1) {
-                alert('Дверь открыта, но вы убиты, увы!');
+                alert('Дверь открыта, но вы убиты 💀, увы!');
                 location.reload();
             } else {
-                alert('Вы неугадали и поплатились жизнью...');
+                alert('Вы неугадали и поплатились 💀 жизнью...');
                 location.reload();
             }
         }
@@ -250,6 +250,8 @@ function Box(number, onUnlock) {
 
     this.popup.addEventListener('click', _handleKnock.bind(this));
 
+    alert('Вы вспомнили про ключ 🗝 у вас в кармане');
+
     function _handleKnock() {
         if (!knocksLeft) return;
 
@@ -258,7 +260,7 @@ function Box(number, onUnlock) {
         setTimeout(function () {
             audio.pause()
             if (!knocksLeft) {
-                alert('Кажется, 🗝 сундук открыт...');
+                alert('Кажется, сундук открыт...');
             }
         }, 2500);
         if (!knocksLeft) {
