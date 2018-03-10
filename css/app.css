@@ -215,9 +215,7 @@ body {
     height: 250px;
     border-radius: 250px;
     background: rgba(0, 0, 0, 0);
-    /* border: solid 20px red; */
     box-shadow: 0px 0px 18px 20px goldenrod;
-
     position: relative;
 }
 
@@ -234,21 +232,25 @@ body {
     z-index: 1;
     transition: background-color .8s, box-shadow .3s;
 }
+
 .door-riddle__circle__lock_0 {
     top: 10%;
     left: 4%;
     box-shadow: inset -4px -4px 4px 0px #de7508;
 }
+
 .door-riddle__circle__lock_1 {
     top: 10%;
     right: 4%;
     box-shadow: inset 4px -4px 4px 0px #de7508;
 }
+
 .door-riddle__circle__lock_2 {
     bottom: 10%;
     left: 4%;
     box-shadow: inset -4px 4px 4px 0px #de7508;
 }
+
 .door-riddle__circle__lock_3 {
     bottom: 10%;
     right: 4%;

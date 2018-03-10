@@ -18,7 +18,7 @@ function Door0(number, onUnlock) {
 
     function _onButtonPointerDown(e) {
         e.target.classList.add('door-riddle__button_pressed');
-        checkCondition.apply(this);
+        _checkCondition.apply(this);
     }
 
     function _onButtonPointerUp(e) {
@@ -28,7 +28,7 @@ function Door0(number, onUnlock) {
     /**
      * Проверяем, можно ли теперь открыть дверь
      */
-    function checkCondition() {
+    function _checkCondition() {
         var isOpened = true;
         buttons.forEach(function (b) {
             if (!b.classList.contains('door-riddle__button_pressed')) {
@@ -72,7 +72,7 @@ function Door1(number, onUnlock) {
     handles[1].successValue = 1 - randVal;
 
     handles.forEach(function (h) {
-        h.addEventListener('pointerdown', _onHandlePointerDown.bind(h));
+        h.addEventListener('pointerdown', _handlePointerDown.bind(h));
         h.addEventListener('pointerup', _clearPointerMoveHandler.bind(h));
         h.addEventListener('pointercancel', _clearPointerMoveHandler.bind(h));
         h.addEventListener('pointerleave', _clearPointerMoveHandler.bind(h));
@@ -83,7 +83,7 @@ function Door1(number, onUnlock) {
         e.target.style.bottom = `${coord}px`;
     }
 
-    function _onHandlePointerDown(e) {
+    function _handlePointerDown(e) {
         this.startPos = this.startPos || e.clientY;
         this.addEventListener('pointermove', _pointerMoveHandler);
     }
@@ -97,13 +97,13 @@ function Door1(number, onUnlock) {
         this.style.bottom = 0;
         clearTimeout(tmout);
         tmout = setTimeout(function () {
-            checkCondition();
+            _checkCondition();
             this.style.transition = null;
             this.successReached = false;
         }.bind(this), transitionDurationMs);
     }
 
-    function checkCondition() {
+    function _checkCondition() {
         var successValue = handles.filter(function (h) {
             return h.successReached === true;
         }).reduce(function (s, h) {
@@ -139,7 +139,7 @@ function Door2(number, onUnlock) {
     var h = this.popup.querySelector('.door-riddle__circle__handle');
     var c = this.popup.querySelector('.door-riddle__circle');
     var locks = Array.from(this.popup.querySelectorAll('.door-riddle__circle__lock'));
-    locks.map(function (l) {
+    locks.forEach(function (l) {
         l.isPointContained = function (p) {
             var bb = l.getBoundingClientRect();
             if (p.y >= bb.top && p.y <= bb.bottom && p.x >= bb.left && p.x <= bb.right)
@@ -158,35 +158,34 @@ function Door2(number, onUnlock) {
     });
     var startPoint, leashLength;
 
-
-    h.addEventListener('pointerdown', _onHandlePointerDown.bind(this.popup));
+    h.addEventListener('pointerdown', _handlePointerDown.bind(this.popup));
     h.addEventListener('pointerup', _clearPointerMoveHandler.bind(this.popup));
     h.addEventListener('pointercancel', _clearPointerMoveHandler.bind(this.popup));
     h.addEventListener('pointerleave', _clearPointerMoveHandler.bind(this.popup));
 
-    function _onHandlePointerDown(e) {
-        this.addEventListener('pointermove', _onPointerMove);
+    function _handlePointerDown(e) {
+        this.addEventListener('pointermove', _handlePointerMove);
         c.style.position = null;
         startPoint = _getElementCenter(h);
         leashLength = _getElementsCenterDist(c, h);
     }
 
     function _clearPointerMoveHandler(e) {
-        this.removeEventListener('pointermove', _onPointerMove);
-        if (checkCondition())
+        this.removeEventListener('pointermove', _handlePointerMove);
+        if (_checkCondition())
             that.unlock();
         locks.map(function (l) {
             l.lock();
         });
     }
 
-    function checkCondition() {
+    function _checkCondition() {
         return locks.filter(function (l) {
             return !l.isUnlocked()
         }).length === 0;
     }
 
-    function _onPointerMove(e) {
+    function _handlePointerMove(e) {
         if (e.target === h) {
             var movementX = e.pageX - startPoint.x;
             var movementY = e.pageY - startPoint.y;
@@ -256,32 +255,32 @@ function Box(number, onUnlock) {
 
         knocksLeft -= 1;
         audio.play()
-        setTimeout(function() {
+        setTimeout(function () {
             audio.pause()
             if (!knocksLeft) {
                 alert('Кажется, 🗝 сундук открыт...');
             }
         }, 2500);
         if (!knocksLeft) {
-            this.popup.addEventListener('pointerdown', _onHandlePointerDown.bind(this));
-            this.popup.addEventListener('pointerup', _onHandlePointerUp.bind(this));
-            this.popup.addEventListener('pointerleave', _onHandlePointerUp.bind(this));
-            this.popup.addEventListener('pointercancel', _onHandlePointerUp.bind(this));
+            this.popup.addEventListener('pointerdown', _handlePointerDown.bind(this));
+            this.popup.addEventListener('pointerup', _handlePointerUp.bind(this));
+            this.popup.addEventListener('pointerleave', _handlePointerUp.bind(this));
+            this.popup.addEventListener('pointercancel', _handlePointerUp.bind(this));
         }
     }
 
-    function _onHandlePointerDown(e) {
+    function _handlePointerDown(e) {
         if (!e.isPrimary) {
-            this.popup.addEventListener('pointermove', _onHandlePointerMove.bind(this));
+            this.popup.addEventListener('pointermove', _handlePointerMove.bind(this));
             startPos = e.pageY;
         }
     }
 
-    function _onHandlePointerUp(e) {
-        this.popup.removeEventListener('pointermove', _onHandlePointerMove.bind(this));
+    function _handlePointerUp(e) {
+        this.popup.removeEventListener('pointermove', _handlePointerMove.bind(this));
     }
 
-    function _onHandlePointerMove(e) {
+    function _handlePointerMove(e) {
         if (!e.isPrimary) {
             if (startPos - e.pageY > 200) {
                 this.unlock();
@@ -298,10 +297,6 @@ Box.prototype.constructor = DoorBase;
 
 var audio = new Audio('sounds/key.mp3');
 audio.play();
-setTimeout(function() {
+setTimeout(function () {
     audio.pause();
 }, 200);
-// audio.addEventListener('play', function() {
-//     audio.pause();
-//     audio.removeEventListener('play', arguments.callee, false);
-// }, false);
