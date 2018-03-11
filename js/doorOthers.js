@@ -91,7 +91,7 @@ function Door1(number, onUnlock) {
     function _clearPointerMoveHandler(e) {
         e.target.removeEventListener('pointermove', _pointerMoveHandler);
         this.style.transition = `bottom ${transitionDurationMs}ms`;
-
+        console.log(this.style.bottom, successCoord)
         this.successReached = this.style.bottom === `${successCoord}px`;
 
         this.style.bottom = 0;
