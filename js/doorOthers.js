@@ -196,7 +196,7 @@ function Door2(number, onUnlock) {
 
             var prevTop = h.style.top;
             var prevLeft = h.style.left;
-            var d = /(-?)\s*(\d*)px/.exec(h.style.top);
+            var d = /(-?)\s*([\d\.]*)px/.exec(h.style.top);
             h.style.top = `calc(50% + ${parseInt(d[1] + d[2]) + movementY}px)`;
             h.style.left = `${parseInt(h.style.left.split('px')[0]) + movementX}px`;
             var dist = _getElementsCenterDist(c, h);
