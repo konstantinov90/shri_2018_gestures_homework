@@ -94,12 +94,12 @@ function Door1(number, onUnlock) {
         console.log(this.style.bottom, successCoord)
         this.successReached = this.style.bottom === `${successCoord}px`;
 
-        this.style.bottom = 0;
         clearTimeout(tmout);
         tmout = setTimeout(function () {
+            this.style.bottom = 0;
             _checkCondition();
             this.style.transition = null;
-            // this.successReached = false;
+            this.successReached = false;
         }.bind(this), transitionDurationMs);
     }
 
