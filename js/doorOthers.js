@@ -99,7 +99,7 @@ function Door1(number, onUnlock) {
         tmout = setTimeout(function () {
             _checkCondition();
             this.style.transition = null;
-            this.successReached = false;
+            // this.successReached = false;
         }.bind(this), transitionDurationMs);
     }
 
