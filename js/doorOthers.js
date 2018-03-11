@@ -91,7 +91,6 @@ function Door1(number, onUnlock) {
     function _clearPointerMoveHandler(e) {
         e.target.removeEventListener('pointermove', _pointerMoveHandler);
         this.style.transition = `bottom ${transitionDurationMs}ms`;
-        console.log(this.style.bottom, successCoord)
         this.successReached = this.style.bottom === `${successCoord}px`;
 
         clearTimeout(tmout);
@@ -109,7 +108,6 @@ function Door1(number, onUnlock) {
         }).reduce(function (s, h) {
             return h.successValue + s;
         }, 0);
-        console.log(successValue);
         if (successValue > 0) {
             if (successValue < 0.5) {
                 that.unlock();
